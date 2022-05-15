@@ -14,7 +14,6 @@ router.get('/', (req, res) => {
         ["product_name", "ASC"]
       ]
     })
-    // if there is no product data, then 404 
     .then((newProduct) => {
     res.status(200).json(newProduct);
     })
@@ -42,20 +41,37 @@ router.get('/:id', (req, res) => {
 // create new product
 router.post('/', (req, res) => {
 
-    Product.create(req.body)
-    .then((newProduct) => {
+    Product.create({
+      product_name: req.body.product_name,
+      price: req.body.price,
+      stock: req.body.stock,
+      category_id: req.body.category_id,
+      tagIds: req.body.tag_id
+    })
+    // this is the code that was provided with the starter code
+    // it does not work as "length" is undefined
+    // when i changed the if statement from tagIds to tag_id the length is then defined,
+    // but the productTagIdArr is NEVER defined like the if statement is never going off
+    // if (req.body.tagIds.length) {
+      //   const productTagIdArr = req.body.tagIds.map((tag_id) => {
+      //     return {
+      //       product_id: product.id,
+      //       tag_id,
+      //     };
+    .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-      if (req.body.tagIds.length) {
-        const productTagIdArr = req.body.tagIds.map((tag_id) => {
-          return {
-            product_id: product.id,
-            tag_id,
-          };
-        });
-        return ProductTag.bulkCreate(productTagIdArr);
-      }
+        if (req.body.tag_id.length) {
+          const productTagIdArr = req.body.tag_id.map((tag_id) => {
+            return {
+              product_id: product.id,
+              tag_id,
+            };
+          });
+          return ProductTag.bulkCreate(productTagIdArr);
+        }
+    
       // if no product tags, just respond
-      res.status(200).json(newProduct);
+      res.status(200).json(product);
     })
     .then((productTagIds) => res.status(200).json(productTagIds))
     .catch((err) => {
