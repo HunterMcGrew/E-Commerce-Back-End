@@ -29,7 +29,6 @@ router.get("/:id", (req, res) => {
     })
     .then((categoryData) => {
       res.status(200).json(categoryData);
-      console.log(categoryData);
     })
     .catch((err) => {
       if (err) throw err;
@@ -52,9 +51,14 @@ router.post("/", (req, res) => {
 // update a category by its `id` value
 router.put("/:id", (req, res) => {
   
-  Category.findByPk(req.params.id)
+  Category.update(req.body, {
+    where: {
+      id: req.params.id
+    }
+  })
 
   .then((categoryData) => {
+    res.status(200).json(categoryData);
   })
   .catch((err) => {
     if (err) throw err;
