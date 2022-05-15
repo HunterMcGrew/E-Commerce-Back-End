@@ -26,10 +26,13 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
-  Category.findByPk(req.params.id, {
+  Category.findByPk({
+      where: {
+        id: req.params.id
+      },
       include: [{ model: Product, as: "products" }],
       order: [
         ["category_name", "ASC"]
