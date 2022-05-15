@@ -32,12 +32,6 @@ router.get('/:id', (req, res) => {
               { model: Tag, as: "tags" }],
     })
     .then((productData) => {
-      // if there is no product data, then 404 
-      if (!productData) {
-        res.status(404).json({ message: "No products found!"});
-      }
-    })
-    .then((productData) => {
       res.status(200).json(productData);
     })
     .catch((err) => {
@@ -118,11 +112,6 @@ router.delete('/:id', (req, res) => {
   Product.destroy({
     where: {
       id: req.params.id
-    }
-  })
-  .then((productData) => {
-    if (!productData) {
-      res.status(404).json({ message: "That product doesn't exist." });
     }
   })
   .then((productData) => {
