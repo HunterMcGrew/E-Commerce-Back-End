@@ -41,17 +41,12 @@ router.get('/:id', (req, res) => {
 // create new product
 router.post('/', (req, res) => {
 
-    Product.create({
-      product_name: req.body.product_name,
-      price: req.body.price,
-      stock: req.body.stock,
-      category_id: req.body.category_id,
-      tagIds: req.body.tag_id
-    })
+    Product.create(req.body)
     // this is the code that was provided with the starter code
     // it does not work as "length" is undefined
     // when i changed the if statement from tagIds to tag_id the length is then defined,
     // but the productTagIdArr is NEVER defined like the if statement is never going off
+    // when console.logged
     // if (req.body.tagIds.length) {
       //   const productTagIdArr = req.body.tagIds.map((tag_id) => {
       //     return {
@@ -60,18 +55,18 @@ router.post('/', (req, res) => {
       //     };
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
-        if (req.body.tag_id.length) {
-          const productTagIdArr = req.body.tag_id.map((tag_id) => {
+      if (!req.body.tagIds) {
+        // if no product tags, just respond
+        res.status(200).json(product);
+        } else if (req.body.tagIds.length) {
+          const productTagIdArr = req.body.tagIds.map((tag_id) => {
             return {
               product_id: product.id,
               tag_id,
             };
-          });
-          return ProductTag.bulkCreate(productTagIdArr);
-        }
-    
-      // if no product tags, just respond
-      res.status(200).json(product);
+        });
+        return ProductTag.bulkCreate(productTagIdArr);
+      }
     })
     .then((productTagIds) => res.status(200).json(productTagIds))
     .catch((err) => {
@@ -125,7 +120,7 @@ router.put('/:id', (req, res) => {
 // delete one product by its `id` value
 router.delete('/:id', (req, res) => {
 
-  Product.destroy(req.body, {
+  Product.destroy({
     where: {
       id: req.params.id
     }
