@@ -8,7 +8,12 @@ router.get("/", (req, res) => {
 
   Category.findAll({
     // include products associated with the Categories
-    include: [{ model: Product, as: "products" }],
+    include: [
+      { 
+        model: Product, 
+        attributes: ["id", "product_name", "price", "stock", "category_id"]
+      }
+    ],
     order: [
       ["category_name", "ASC"]
     ]
@@ -25,7 +30,12 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   
   Category.findByPk(req.params.id, {
-      include: [{ model: Product, as: "products" }],
+    include: [
+      { 
+        model: Product, 
+        attributes: ["id", "product_name", "price", "stock", "category_id"]
+      }
+    ]
     })
     .then((categoryData) => {
       res.status(200).json(categoryData);

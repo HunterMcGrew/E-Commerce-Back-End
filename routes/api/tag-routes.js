@@ -24,7 +24,12 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
  
     Tag.findByPk(req.params.id, {
-      include: [{ model: Product, thought: ProductTag, as: "products" }]
+      include: [
+        {
+          model: Product,
+          attributes: ["id", "product_name", "price", "stock", "category_id"]
+        }
+      ]
     })
     .then((tagData) => {
       res.status(200).json(tagData);
@@ -37,7 +42,9 @@ router.get('/:id', (req, res) => {
  // create a new tag
 router.post('/', (req, res) => {
  
-  Tag.create(req.body)
+  Tag.create({
+    tag_name: req.body.tag_name
+  })
   .then((tagData) => {
     res.status(200).json(tagData);
   })
